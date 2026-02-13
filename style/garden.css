@@ -179,3 +179,29 @@
 .garden-plot__button.hidden {
     display: none;
 }
+
+
+.seed-locked {
+    position: relative;
+    opacity: 0.4;
+    filter: grayscale(100%) brightness(0.5);
+    cursor: not-allowed;
+}
+.seed-locked::before {
+    content: '🔒';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px; z-index: 10;
+    background: rgba(0,0,0,0.9); border-radius: 50%;
+    width: 35px; height: 35px; display: flex;
+    align-items: center; justify-content: center;
+    color: #ff4444; border: 2px solid #ff4444;
+}
+.seed-locked::after {
+    content: attr(data-lock-cost);
+    position: absolute; bottom: -25px; left: 50%;
+    transform: translateX(-50%); background: #333; color: #ffaa00;
+    padding: 2px 6px; border-radius: 12px; font-size: 11px;
+    font-weight: bold; white-space: nowrap;
+}
+

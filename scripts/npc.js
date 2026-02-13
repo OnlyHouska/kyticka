@@ -1,4 +1,4 @@
-// Updated npc.js with inventory system integration
+// FULLY WORKING npc.js - FIXED inventory + all functions
 
 // Track active NPCs by position
 const activeNPCs = {
@@ -7,116 +7,103 @@ const activeNPCs = {
     3: null
 };
 
-// Inventory data structure (loaded from localStorage)
-let inventory = {};
-
-// Plant types mapping (1-5 matching your garden system)
-const plantNames = {
-    1: 'plantOne',
-    2: 'plantTwo', 
-    3: 'plantThree',
-    4: 'plantFour',
-    5: 'plantFive'
-};
-
-function loadInventory() {
-    const saved = localStorage.getItem('gardenInventory');
-    if (saved) {
+function getPlantCounts() {
+    const cookies = document.cookie.split('; ');
+    const gardenCookie = cookies.find(row => row.startsWith('gardenGame='));
+    
+    if (gardenCookie) {
         try {
-            inventory = JSON.parse(saved);
-        } catch (e) {
-            console.error('Error loading inventory:', e);
-            inventory = {};
+            const jsonData = decodeURIComponent(gardenCookie.split('=')[1]);
+            const gameData = JSON.parse(jsonData);
+            return gameData.plantCounts || {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+        } catch (error) {
+            console.error('Error reading plant counts:', error);
         }
-    } else {
-        inventory = {};
     }
-    console.log('Inventory loaded:', inventory);
+    return {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
 }
 
-function saveInventory() {
-    localStorage.setItem('gardenInventory', JSON.stringify(inventory));
+function hasEnoughItems(plantNumber, count) {
+    const plantCounts = getPlantCounts();
+    return (plantCounts[plantNumber] || 0) >= count;
 }
 
-function hasEnoughItems(itemType, count) {
-    return inventory[itemType] >= count;
+function getPlantName(num) {
+    const names = {1: 'One', 2: 'Two', 3: 'Three', 4: 'Four', 5: 'Five'};
+    return names[num] || 'One';
 }
 
-function removeItems(itemType, count) {
-    if (hasEnoughItems(itemType, count)) {
-        inventory[itemType] -= count;
-        if (inventory[itemType] === 0) {
-            delete inventory[itemType];
+function removeItems(plantNumber, count) {
+    const cookies = document.cookie.split('; ');
+    const gardenCookie = cookies.find(row => row.startsWith('gardenGame='));
+    
+    if (!gardenCookie) return false;
+    
+    try {
+        const jsonData = decodeURIComponent(gardenCookie.split('=')[1]);
+        const gameData = JSON.parse(jsonData);
+        const plantCounts = gameData.plantCounts || {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+        
+        if ((plantCounts[plantNumber] || 0) >= count) {
+            plantCounts[plantNumber] -= count;
+            gameData.plantCounts = plantCounts;
+            
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 365);
+            document.cookie = `gardenGame=${encodeURIComponent(JSON.stringify(gameData))}; expires=${expiryDate.toUTCString()}; path=/`;
+            
+            // UPDATE DISPLAYS
+            Object.keys(plantCounts).forEach(key => {
+                const element = document.getElementById(`plant${getPlantName(key)}Count`);
+                if (element) element.textContent = plantCounts[key];
+            });
+            
+            return true;
         }
-        saveInventory();
-        return true;
+    } catch (error) {
+        console.error('Error updating inventory:', error);
     }
     return false;
 }
 
-function generateNPCRequest() {
-    // 1-3 items (2 most common)
-    const numItems = Math.random() < 0.1 ? 1 : (Math.random() < 0.7 ? 2 : 3);
+function generateNPCRequest(position) {
+    const gameData = getGameCookieData();
+    const unlockedPlants = getUnlockedPlants(gameData);
+    
+    // POSITION 1 = VŽDY SAFE (unlocked only)
+    const isSafeNPC = position === 1;
+    
+    let availableTypes;
+    if (isSafeNPC) {
+        // ✅ POSITION 1 = POUZE UNLOCKED plants
+        availableTypes = unlockedPlants.length > 0 ? unlockedPlants : [1];
+    } else {
+        // ✅ POSITIONS 2,3 = VŠE (1-5)
+        availableTypes = [1, 2, 3, 4, 5];
+    }
+    
+    // ZABRAN DUPLICITŮ - shuffle a vezmi unikátní
+    const shuffled = availableTypes.sort(() => Math.random() - 0.5);
+    const uniqueTypes = shuffled.slice(0, 2); // Max 2 různé typy
     
     const request = [];
-    for (let i = 0; i < numItems; i++) {
-        // 1-5 count (3 most common)
-        const count = Math.random() < 0.15 ? 1 : 
-                     (Math.random() < 0.7 ? 3 : 
-                     (Math.random() < 0.7 ? 4 : 5));
-        
-        const itemType = Math.floor(Math.random() * 5) + 1; // 1-5
-        request.push({ type: itemType, count });
-    }
+    uniqueTypes.forEach(type => {
+        let count = type === 5 ? 1 : 
+                   (Math.random() < 0.2 ? 2 : (Math.random() < 0.6 ? 3 : 4));
+        request.push({ type, count });
+    });
     
     return request;
 }
 
+
 function calculateReward(request) {
-    let totalItems = 0;
-    let specificBonus = 0;
-    
+    let totalItems = 0, specificBonus = 0;
     request.forEach(item => {
         totalItems += item.count;
-        // Bonus for specific item (let's say type 5 is special)
-        if (item.type === 5) {
-            specificBonus += item.count;
-        }
+        if (item.type === 5) specificBonus += item.count;
     });
-    
-    return (totalItems * 2) + (specificBonus * 2); // 2 per item + 4 for special (type 5)
-}
-
-function fulfillNPCRequest(npc, position) {
-    const request = npc.request;
-    let canFulfill = true;
-    
-    // Check if we have all required items
-    for (let item of request) {
-        if (!hasEnoughItems(plantNames[item.type], item.count)) {
-            canFulfill = false;
-            break;
-        }
-    }
-    
-    if (canFulfill) {
-        // Remove items from inventory
-        for (let item of request) {
-            removeItems(plantNames[item.type], item.count);
-        }
-        
-        // Add money
-        const reward = calculateReward(request);
-        addMoney(reward);
-        
-        // Remove NPC
-        removeNPC(position);
-        
-        console.log(`NPC fulfilled! Reward: ${reward} money, inventory updated`);
-        return true;
-    }
-    
-    return false;
+    return (totalItems * 2) + (specificBonus * 2);
 }
 
 function createNPCBubble(npc, position) {
@@ -124,93 +111,203 @@ function createNPCBubble(npc, position) {
     bubble.classList.add('npc__bubble');
     bubble.dataset.position = position;
     
-    // Display request in bubble
-    let bubbleText = 'Chci:<br>';
+    let bubbleHTML = '';
     npc.request.forEach(item => {
-        bubbleText += `${item.count}x Rostlina ${item.type}<br>`;
+        const plantDiv = document.createElement('div');
+        plantDiv.className = `plant plant-${item.type}`;
+        plantDiv.dataset.count = item.count;
+        plantDiv.title = `${item.count}x Rostlina ${item.type}`;
+        bubbleHTML += `<div class="npc-request-item"><span class="count">${item.count}x</span>${plantDiv.outerHTML}</div>`;
     });
     
-    bubble.innerHTML = bubbleText;
+    bubble.innerHTML = bubbleHTML;
     npc.element.appendChild(bubble);
-    
-    // Click to fulfill
-    bubble.addEventListener('click', () => {
-        fulfillNPCRequest(npc, position);
-    });
+}
+
+function getGameCookieData() {
+    const cookies = document.cookie.split('; ');
+    const gardenCookie = cookies.find(row => row.startsWith('gardenGame='));
+    if (gardenCookie) {
+        try {
+            return JSON.parse(decodeURIComponent(gardenCookie.split('=')[1]));
+        } catch (error) {
+            console.error('Error reading game cookie:', error);
+        }
+    }
+    return null;
+}
+
+function getUnlockedPlants(gameData) {
+    const unlocked = [1, 2];
+    if (gameData?.lockedSeeds) {
+        if (!gameData.lockedSeeds[3] || gameData.lockedSeeds[3] === false) unlocked.push(3);
+        if (!gameData.lockedSeeds[4] || gameData.lockedSeeds[4] === false) unlocked.push(4);
+        if (!gameData.lockedSeeds[5] || gameData.lockedSeeds[5] === false) unlocked.push(5);
+    }
+    return unlocked;
 }
 
 function spawnNPC() {
     const npcContainer = document.querySelector('.npc__container');
     if (!npcContainer) return;
     
-    // Choose a random position that doesn't have an NPC yet
     const availablePositions = [];
     for (let pos = 1; pos <= 3; pos++) {
-        if (!activeNPCs[pos]) {
-            availablePositions.push(pos);
-        }
+        if (!activeNPCs[pos]) availablePositions.push(pos);
     }
     
-    if (availablePositions.length === 0) {
-        console.log('All positions occupied');
-        return;
-    }
+    if (availablePositions.length === 0) return;
     
     const posNum = availablePositions[Math.floor(Math.random() * availablePositions.length)];
-    
     const npcElement = document.createElement('div');
     npcElement.classList.add('npc');
     npcElement.dataset.position = posNum;
     
     const isArthur = Math.random() < 0.1;
     const skinNum = isArthur ? 'arthur' : Math.floor(Math.random() * 4) + 1;
-    npcElement.classList.add(`npc--skin-${skinNum}`);
-    npcElement.classList.add(`npc--pos-${posNum}`);
+    npcElement.classList.add(`npc--skin-${skinNum}`, `npc--pos-${posNum}`);
     
-    // Create NPC data object
     const npcData = {
         element: npcElement,
         position: posNum,
-        request: generateNPCRequest()
+        request: generateNPCRequest(posNum),
+        isSafe: posNum === 1,
+        despawnTimer: null 
     };
-    
+
     npcContainer.appendChild(npcElement);
     activeNPCs[posNum] = npcData;
     
-    // Add interaction bubble after short delay
-    setTimeout(() => {
-        createNPCBubble(npcData, posNum);
-    }, 500);
-    
-    console.log(`NPC spawned: skin-${skinNum}, pos-${posNum}, request:`, npcData.request);
+    npcData.despawnTimer = setTimeout(() => {
+        removeNPC(posNum);
+    }, 50000);
+
+    setTimeout(() => createNPCBubble(npcData, posNum), 500);
 }
 
 function removeNPC(position) {
     if (activeNPCs[position]) {
         const npc = activeNPCs[position];
+        
+        if (npc.despawnTimer) {
+            clearTimeout(npc.despawnTimer);
+        }
+        
         if (npc.element.parentNode) {
             npc.element.parentNode.removeChild(npc.element);
         }
         activeNPCs[position] = null;
-        console.log(`NPC removed from position ${position}`);
     }
 }
+
+function fulfillNPCRequest(position) {
+    const npc = activeNPCs[position];
+    if (!npc) return false;
+    
+    const request = npc.request;
+    let canFulfill = true;
+    
+    for (let item of request) {
+        if (!hasEnoughItems(item.type, item.count)) {
+            canFulfill = false;
+            break;
+        }
+    }
+    
+    if (canFulfill) {
+        if (npc.despawnTimer) {
+            clearTimeout(npc.despawnTimer);
+        }
+
+        for (let item of request) {
+            removeItems(item.type, item.count);
+        }
+        
+        const reward = calculateReward(request);
+        if (typeof addMoney === 'function') addMoney(reward);
+        
+        removeNPC(position);
+        console.log(`NPC ${position} fulfilled! Reward: ${reward}`);
+        return true;
+    }
+    console.log(`Cannot fulfill NPC ${position}`);
+    return false;
+}
+
+window.fulfillNPC = fulfillNPCRequest;
+
+// NPC LINKS
+let npcLinks = {};
+
+function showNPCLink(position) {
+    hideNPCLink(position);
+    const button = document.querySelector(`.npc-btn--pos${position}`);
+    const npc = activeNPCs[position];
+    
+    if (!button || !npc?.element) return;
+    
+    const link = document.createElement('div');
+    link.className = `npc-link npc-link--pos${position} show`;
+    document.body.appendChild(link);
+    npcLinks[position] = link;
+    
+    requestAnimationFrame(() => updateNPCLink(position));
+}
+
+function hideNPCLink(position) {
+    const link = npcLinks[position];
+    if (link) {
+        link.classList.remove('show');
+        setTimeout(() => {
+            if (link.parentNode) link.parentNode.removeChild(link);
+        }, 400);
+        delete npcLinks[position];
+    }
+}
+
+function updateNPCLink(position) {
+    const link = npcLinks[position];
+    const button = document.querySelector(`.npc-btn--pos${position}`);
+    const npc = activeNPCs[position];
+    
+    if (!link || !button || !npc?.element) return;
+    
+    const buttonRect = button.getBoundingClientRect();
+    const npcRect = npc.element.getBoundingClientRect();
+    
+    const startX = buttonRect.right + window.scrollX;
+    const startY = buttonRect.top + buttonRect.height / 2 + window.scrollY;
+    const endX = npcRect.left + npcRect.width / 2 + window.scrollX;
+    const endY = npcRect.top + npcRect.height / 2 + window.scrollY;
+    
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    
+    link.style.left = startX + 'px';
+    link.style.top = startY + 'px';
+    link.style.width = length + 'px';
+    link.style.transform = `rotate(${Math.atan2(endY - startY, endX - startX)}rad)`;
+    link.style.transformOrigin = '0 50%';
+}
+
+document.addEventListener('mousemove', () => {
+    Object.keys(npcLinks).forEach(pos => {
+        if (activeNPCs[parseInt(pos)]) updateNPCLink(parseInt(pos));
+    });
+});
 
 function startNPCSpawning() {
     function spawnNext() {
         spawnNPC();
-        
-        const nextInterval = (Math.random() * 10 + 20) * 1000;
-        setTimeout(spawnNext, nextInterval);
+        setTimeout(spawnNext, (Math.random() * 10 + 20) * 1000);
     }
-    
     spawnNext();
 }
 
-// Initialize inventory system and NPC spawning
+function hasEnoughItems(plantNumber, count) {
+    const plantCounts = getPlantCounts();
+    return (plantCounts[plantNumber] || 0) >= count;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    loadInventory();
-    setTimeout(() => {
-        startNPCSpawning();
-    }, 1000);
+    setTimeout(startNPCSpawning, 10000);
 });

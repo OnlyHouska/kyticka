@@ -17,6 +17,54 @@
             z-index: 9999;
             pointer-events: none;
         }
+
+        /* SEED LOCK VISUALIZATION */
+        .seed-locked {
+            position: relative;
+            opacity: 0.4;
+            filter: grayscale(100%) brightness(0.5);
+            cursor: not-allowed;
+        }
+        
+        .seed-locked::before {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            z-index: 10;
+            background: rgba(0,0,0,0.9);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+            box-shadow: 0 0 8px rgba(255,68,68,0.6);
+        }
+
+        .seed-locked::after {
+            content: attr(data-lock-cost);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #ffaa00;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 11;
+        }
+
+        .seed-locked:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body style="background-color: green; height: 100vh; user-select: none; overflow: hidden;">
@@ -25,11 +73,33 @@
         <div style="position: relative;">
             <img src="../assets/ui-toolbar.png" class="ui-toolbar">
             <div style="left: 73px; top: 33px; position: absolute; padding: 0 20px; display: flex; gap: 15px;">                
+                <!-- SEED 1 - UNLOCKED -->
                 <div class="seed seed-1 movable" title="ja nevim kamo listy zeleny nejaky"></div>
+                
+                <!-- SEED 2 - UNLOCKED -->
                 <div class="seed seed-2 movable" title="buraky asi"></div>
-                <div class="seed seed-3 movable" title="cibulka"></div>
-                <div class="seed seed-4 movable" title="malinka malinka"></div>
-                <div class="seed seed-5 movable" title="melounek"></div>
+                
+                <!-- SEED 3 - LOCKED (15 coins) -->
+                <div class="seed seed-3 movable seed-locked" 
+                     title="cibulka (klikni pro odemknutí)" 
+                     data-lock-cost="15💰"
+                     data-seed-type="3">
+                </div>
+                
+                <!-- SEED 4 - LOCKED (15 coins) -->
+                <div class="seed seed-4 movable seed-locked" 
+                     title="malinka malinka (klikni pro odemknutí)" 
+                     data-lock-cost="15💰"
+                     data-seed-type="4">
+                </div>
+                
+                <!-- SEED 5 - LOCKED (25 coins) -->
+                <div class="seed seed-5 movable seed-locked" 
+                     title="melounek (klikni pro odemknutí)" 
+                     data-lock-cost="25💰"
+                     data-seed-type="5">
+                </div>
+                
                 <div class="watering-can movable" title="konvicka"></div>
                 <div class="basket movable" title="kosicek"></div>
                 <div class="shovel movable" title="lopatka"></div>
@@ -63,6 +133,35 @@
     </div>
     
     <div class="ui-center" style="display: flex; flex-direction: column;">
+        <div class="npc-control-panel">
+            <div class="npc-buttons-grid">
+                <button class="npc-btn npc-btn--pos1" 
+                        data-npc-pos="1" 
+                        onclick="fulfillNPC(1)"
+                        onmouseenter="showNPCLink(1)"
+                        onmouseleave="hideNPCLink(1)">
+                    <span class="npc-btn__icon">👤</span>
+                    <span class="npc-btn__text">Prodat prvnímu</span>
+                </button>
+                <button class="npc-btn npc-btn--pos2" 
+                        data-npc-pos="2" 
+                        onclick="fulfillNPC(2)"
+                        onmouseenter="showNPCLink(2)"
+                        onmouseleave="hideNPCLink(2)">
+                    <span class="npc-btn__icon">👤</span>
+                    <span class="npc-btn__text">Prodat druhému</span>
+                </button>
+                <button class="npc-btn npc-btn--pos3" 
+                        data-npc-pos="3" 
+                        onclick="fulfillNPC(3)"
+                        onmouseenter="showNPCLink(3)"
+                        onmouseleave="hideNPCLink(3)">
+                    <span class="npc-btn__icon">👤</span>
+                    <span class="npc-btn__text">Prodat třetímu</span>
+                </button>
+            </div>
+        </div>
+        
         <!-- First Row -->
         <div class="garden-row">
             <!-- Garden Plot 1 -->

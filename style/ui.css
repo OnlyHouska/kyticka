@@ -1,0 +1,67 @@
+.backArrowIcon {
+    background-image: url('../assets/arrows.png');
+    background-position: 257px 254px;
+    width: 50px;
+    height: 50px;
+    display: block;
+    background-size: 175px;
+    transition: all .2s;
+}
+
+.backArrowIcon:hover {
+    transform: scale(1.1);
+}
+
+.ui-center {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ui-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ui-toolbar {
+    height: 100px;
+    margin: 0 130px;
+    transform: scaleX(1.5);
+}
+
+.timer {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    width: 150px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    display: none;
+}
+.timer-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #4CAF50;
+    transition: width 0.5s linear;
+    border-radius: 5px;
+}
+
+.toolbar-food {
+    position: absolute;
+    transform: rotateZ(90deg) scale(2,3);
+    top: 370px;
+    right: -60px;
+}
+
+.ui-container {
+    position: relative;
+}
+
+.hidden {
+    display: none;
+}

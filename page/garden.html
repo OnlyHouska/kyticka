@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kyticka</title>
+    <link rel="stylesheet" href="../style/garden.css">
+    <link rel="stylesheet" href="../style/ui.css">
+    <link rel="stylesheet" href="../style/npc.css">
+    <style>
+        .movable {
+            cursor: grab;
+        }
+        .movable.dragging {
+            cursor: grabbing;
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body style="background-color: green; height: 100vh; user-select: none; overflow: hidden;">
+    <div class="ui-top">
+        <a href="./finalCard.html" class="backArrowIcon"></a>
+        <div style="position: relative;">
+            <img src="../assets/ui-toolbar.png" class="ui-toolbar">
+            <div style="left: 73px; top: 33px; position: absolute; padding: 0 20px; display: flex; gap: 15px;">                
+                <div class="seed seed-1 movable" title="ja nevim kamo listy zeleny nejaky"></div>
+                <div class="seed seed-2 movable" title="buraky asi"></div>
+                <div class="seed seed-3 movable" title="cibulka"></div>
+                <div class="seed seed-4 movable" title="malinka malinka"></div>
+                <div class="seed seed-5 movable" title="melounek"></div>
+                <div class="watering-can movable" title="konvicka"></div>
+                <div class="basket movable" title="kosicek"></div>
+                <div class="shovel movable" title="lopatka"></div>
+            </div>
+        </div>
+
+        <div style="position: absolute; right: 70px; top: 150px;">
+            <div style=" display: flex; gap: 20px;">
+                <div style="position: relative; height: 50px; width: 50px; margin-top: -10px; margin-right: 100px;">
+                    <img src="../assets/money.png" style="width: 100%; height: 100%;">
+                    <span id="moneyCount" style="position: absolute; bottom: -20px; left: 22px;">0</span>
+                </div>
+
+                <div class="plant plant-1" style="position: relative;">
+                    <span id="plantOneCount" style="position: absolute; bottom: -20px; left: 10px;">0</span>
+                </div>
+                <div class="plant plant-2" style="position: relative; background-position: 37px -7px;">
+                    <span id="plantTwoCount" style="position: absolute; bottom: -20px; left: 10px;">0</span>
+                </div>
+                <div class="plant plant-3" style="position: relative; background-position: -76px -10px;">
+                    <span id="plantThreeCount" style="position: absolute; bottom: -20px; left: 10px;">0</span>
+                </div>
+                <div class="plant plant-4" style="position: relative; width: 40px; background-position: -72px -48px;">
+                    <span id="plantFourCount" style="position: absolute; bottom: -20px; left: 14px;">0</span>
+                </div>
+                <div class="plant plant-5" style="position: relative; width: 37px; height: 42px; background-size: 412px; left: unset; background-position: -617px 41px;">
+                    <span id="plantFiveCount" style="position: absolute; bottom: -20px; left: 13.5px;">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ui-center" style="display: flex; flex-direction: column;">
+        <!-- First Row -->
+        <div class="garden-row">
+            <!-- Garden Plot 1 -->
+            <div class="garden-plot" data-garden="1">
+
+                <button class="garden-plot__button hidden">
+                    Koupit
+                </button>
+
+                <img class="dirt" src="../assets/pile-of-dirt.png" style="height: 150px; width: 150px;"/>
+                <div class="timer">
+                    <div class="timer-fill"></div>
+                </div>
+        
+                <div class="seed-stage seed-stage-0"></div>
+                <div class="seed-stage seed-stage-1"></div>
+                <div class="seed-stage seed-stage-2"></div>
+                <div class="seed-stage seed-stage-3"></div>
+
+                <div class="plant plant-pos-0 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-1 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-2 plant-placeholder movable" title="vem to"></div>
+            </div>
+
+            <!-- Garden Plot 2 -->
+            <div class="garden-plot" data-garden="2">
+
+                <button class="garden-plot__button">
+                    Koupit
+                </button>
+
+                <img class="dirt" src="../assets/pile-of-dirt.png" style="height: 150px; width: 150px;"/>
+                <div class="timer">
+                    <div class="timer-fill"></div>
+                </div>
+        
+                <div class="seed-stage seed-stage-0"></div>
+                <div class="seed-stage seed-stage-1"></div>
+                <div class="seed-stage seed-stage-2"></div>
+                <div class="seed-stage seed-stage-3"></div>
+
+                <div class="plant plant-pos-0 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-1 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-2 plant-placeholder movable" title="vem to"></div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="garden-row">
+            <!-- Garden Plot 3 -->
+            <div class="garden-plot" data-garden="3">
+
+                 <button class="garden-plot__button">
+                    Koupit
+                </button>
+
+                <img class="dirt" src="../assets/pile-of-dirt.png" style="height: 150px; width: 150px;"/>
+                <div class="timer">
+                    <div class="timer-fill"></div>
+                </div>
+        
+                <div class="seed-stage seed-stage-0"></div>
+                <div class="seed-stage seed-stage-1"></div>
+                <div class="seed-stage seed-stage-2"></div>
+                <div class="seed-stage seed-stage-3"></div>
+
+                <div class="plant plant-pos-0 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-1 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-2 plant-placeholder movable" title="vem to"></div>
+            </div>
+
+            <!-- Garden Plot 4 -->
+            <div class="garden-plot" data-garden="4">
+
+                <button class="garden-plot__button">
+                    Koupit
+                </button>
+
+                <img class="dirt" src="../assets/pile-of-dirt.png" style="height: 150px; width: 150px;"/>
+                <div class="timer">
+                    <div class="timer-fill"></div>
+                </div>
+        
+                <div class="seed-stage seed-stage-0"></div>
+                <div class="seed-stage seed-stage-1"></div>
+                <div class="seed-stage seed-stage-2"></div>
+                <div class="seed-stage seed-stage-3"></div>
+
+                <div class="plant plant-pos-0 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-1 plant-placeholder movable" title="vem to"></div>
+                <div class="plant plant-pos-2 plant-placeholder movable" title="vem to"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="npc__fences">
+        <div class="npc__fence-group-1">
+            <div class="npc__fence npc__fence-1">
+                <img src="../assets/fence.png">
+            </div>
+            <div class="npc__fence npc__fence-1 npc__fence-1-2">
+                <img src="../assets/fence.png">
+            </div>
+        </div>
+        <div class="npc__fence-group-2">
+            <div class="npc__fence npc__fence-2">
+                <img src="../assets/fence.png">
+            </div>
+            <div class="npc__fence npc__fence-2 npc__fence-2-2">
+                <img src="../assets/fence.png">
+            </div>
+        </div>
+        <div class="npc__fence-group-3">
+            <div class="npc__fence npc__fence-3">
+                <img src="../assets/fence.png">
+            </div>
+            <div class="npc__fence npc__fence-3 npc__fence-3-2">
+                <img src="../assets/fence.png">
+            </div>
+            <div class="npc__fence npc__fence-3 npc__fence-3-3">
+                <img src="../assets/fence.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="npc__container">
+    </div>
+</body>
+
+<script src="../scripts/garden.js"></script>
+<script src="../scripts/npc.js"></script>
+</html>

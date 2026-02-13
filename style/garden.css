@@ -1,0 +1,181 @@
+.seed {
+    background-image: url('../assets/seeds.png');
+    width: 27px;
+    height: 40px;
+    background-size: 412px;
+}
+
+.seed-1 {
+    background-position: 368px 494px;
+}
+
+.seed-2 {
+    background-position: 72px 242px;
+}
+
+.seed-3 {
+    background-position: -111px 494px;
+}
+
+.seed-4 {
+    background-position: -112px 581px;
+    height: 35px;
+}
+
+.seed-5 {
+    background-position: -618px 397px;
+    background-size: 390px;
+}
+
+.watering-can {
+    width: 40px;
+    height: 40px;
+    background-image: url('../assets/watering-can.png');
+    background-position: 45px 49px;
+    background-size: 63px;
+    transition: transform .2s;
+}
+
+.watering-can--rotate {
+    transform: rotate(45deg);
+}
+
+.seed-stage {
+    background-image: url('../assets/seeds-stages.png');
+    background-size: 170px;
+    width: 50px;
+    height: 70px;
+    position: absolute;
+    top: 0;
+    left: 50px;
+
+    display: none;
+    z-index: -10;
+}
+
+.seed-stage-0 {
+    background-position: -21px 0;
+}
+
+.seed-stage-1 {
+    background-position: -94px 0;
+    width: 62px;
+}
+
+.seed-stage-2 {
+    background-position: -20px -63px;
+    height: 100px;
+    top: -30px;
+}
+
+.seed-stage-3 {
+    background-position: -93px -63px;
+    height: 100px;
+    top: -30px;
+}
+
+.plant {
+    background-image: url('../assets/seeds.png');
+    width: 27px;
+    height: 40px;
+    background-size: 412px;
+    position: absolute;
+    display: none;
+}
+
+.plant-pos-0 {
+    top: -22px;
+    left: 83px;
+}
+.plant-pos-1 {
+    top: -5px;
+    left: 47px;
+}
+.plant-pos-2 {
+    top: 10px;
+    left: 80px;
+}
+
+.plant-1 {
+    background-position: -11px -9px;
+    display: block;
+}
+.plant-1.plant-pos-1 {
+    rotate: 290deg;
+}
+
+.plant-2 {
+    background-position: 36px 0;
+    display: block;
+}
+
+.plant-3 {
+    background-position: -81px -7px;
+    display: block;
+}
+
+.plant-4 {
+    background-position: -77px -43px;
+    display: block;
+}
+
+.plant-5 {
+    background-position: -491px 101px;
+    background-size: 1000px;
+    width: 97px;
+    height: 100px;
+    left: 28px;
+    display: block;
+}
+
+.basket {
+    width: 40px;
+    height: 40px;
+    background-image: url('../assets/basket.png');
+    background-position: 46px 48px;
+    background-size: 63px;
+}
+
+.shovel {
+    width: 40px;
+    height: 40px;
+    background-image: url('../assets/shovel.png');
+    background-position: 50px 48px;
+    background-size: 70px;
+}
+
+
+.garden-plot {
+    position: relative;
+    margin: 0 30px;
+    display: flex;
+}
+.garden-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.garden-plot__button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.garden-plot__button:hover {
+    background-color: #45a049;
+}
+
+.garden-plot__button.hidden {
+    display: none;
+}

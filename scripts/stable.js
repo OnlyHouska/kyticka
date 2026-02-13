@@ -23,7 +23,7 @@ function saveHorsesToCookie() {
 
 // load horses from cookie
 function loadHorsesFromCookie() {
-    const gameData = getGameCookie();
+    const gameData = getGameCookie(); 
     if (gameData?.horses) {
         Object.keys(gameData.horses).forEach(key => {
             horses[key] = gameData.horses[key];
@@ -40,7 +40,7 @@ function loadHorsesFromCookie() {
 
                 const nameTag = document.getElementById(`nametag${key}`);
                 nameTag.style.display = 'block';
-                
+
                 const horseNameElement = document.getElementById(`horseName${key}`);
                 horseNameElement.style.display = 'block';
                 horseNameElement.textContent = horses[key].name;
@@ -75,7 +75,7 @@ function buyHorse(horseId, cost) {
 
         const horseNameElement = document.getElementById(`horseName${horseId}`);
         horseNameElement.style.display = 'block';
-        
+
         const name = prompt('Jmeno si vyber taky zeo')
         if (name) {
             horseNameElement.textContent = name;
@@ -90,6 +90,59 @@ function buyHorse(horseId, cost) {
     }
 }
 
+// Horse spin - ANTI-SPAM + animation lock!
+const horseStates = {
+    1: false,  // busy = spinning
+    2: false,
+    3: false
+};
+const horseCooldowns = {
+    1: 0,
+    2: 0,
+    3: 0
+};
+
+function spinHorse(horseNumber) {
+    const now = Date.now();
+    const horse = document.querySelector(`.horse--${horseNumber}`);
+    if (!horse) return;
+
+    // 1. SPINNING LOCK (čekej na animaci)
+    if (horseStates[horseNumber]) {
+        return;
+    }
+
+    // 2. SPAM COOLDOWN (< 2s = spam)
+    if (now - horseCooldowns[horseNumber] < 4000) {
+        alert(`kamo je mi blbe nech me bejt`);
+        return;
+    }
+
+    // ✅ OK - spust spin!
+    horseStates[horseNumber] = true;  // LOCK
+    horseCooldowns[horseNumber] = now; // COOLDOWN
+
+    horse.style.animation = 'none';
+    horse.offsetHeight;
+    horse.classList.add('spinning');
+
+    // UNLOCK po 3s
+    setTimeout(() => {
+        horse.classList.remove('spinning');
+        horseStates[horseNumber] = false;  // SPIN UNLOCK
+    }, 3000);
+}
+
+window.spinHorse = spinHorse;
+
+// Event listenery s anti-spam
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.horse').forEach((horse, index) => {
+        horse.addEventListener('click', () => {
+            spinHorse(index + 1);
+        });
+    });
     loadHorsesFromCookie();
 });
+
+window.spinHorse = spinHorse;

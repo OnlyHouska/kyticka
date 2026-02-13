@@ -128,13 +128,22 @@ function generateNPCRequest(position) {
 
 
 function calculateReward(request) {
-    let totalItems = 0, specificBonus = 0;
+    const plantCosts = {
+        1: 2,
+        2: 2,
+        3: 3,
+        4: 3,
+        5: 5
+    };
+    
+    let totalReward = 0;
     request.forEach(item => {
-        totalItems += item.count;
-        if (item.type === 5) specificBonus += item.count;
+        totalReward += item.count * plantCosts[item.type];
     });
-    return (totalItems * 2) + (specificBonus * 2);
+    
+    return totalReward;
 }
+
 
 function createNPCBubble(npc, position) {
     const bubble = document.createElement('div');
@@ -249,18 +258,21 @@ function fulfillNPCRequest(position) {
             clearTimeout(npc.despawnTimer);
         }
 
-        // 🎉 PUSŤ CONFetti NA NPC!
+        // 🎉 ARTHUR SPECIAL: 100 MONEY FLAT!
+        const isArthur = npc.element.classList.contains('npc--skin-arthur');
+        const reward = isArthur ? 100 : calculateReward(request);
+        
+        // PUSŤ CONFetti NA NPC!
         playConfettiAnimation(npc.element);
 
         for (let item of request) {
             removeItems(item.type, item.count);
         }
         
-        const reward = calculateReward(request);
         if (typeof addMoney === 'function') addMoney(reward);
         
         removeNPC(position);
-        console.log(`NPC ${position} fulfilled! Reward: ${reward} 🎉`);
+        console.log(`NPC ${position} ${isArthur ? 'ARTHUR' : 'fulfilled'}! Reward: ${reward} 🎉`);
         return true;
     }
     console.log(`Cannot fulfill NPC ${position}`);
@@ -341,6 +353,51 @@ function hasEnoughItems(plantNumber, count) {
     return (plantCounts[plantNumber] || 0) >= count;
 }
 
+// Spawn ARTHUR na náhodné volné pozici!
+function spawnArthur() {
+    const npcContainer = document.querySelector('.npc__container');
+    if (!npcContainer) return;
+    
+    // Najdi volné pozice
+    const availablePositions = [];
+    for (let pos = 1; pos <= 3; pos++) {
+        if (!activeNPCs[pos]) availablePositions.push(pos);
+    }
+    
+    if (availablePositions.length === 0) {
+        console.log('No free positions for Arthur!');
+        return;
+    }
+    
+    // Náhodná volná pozice
+    const posNum = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+    const npcElement = document.createElement('div');
+    npcElement.classList.add('npc', 'npc--skin-arthur', `npc--pos-${posNum}`);
+    npcElement.dataset.position = posNum;
+    
+    // ARTHUR VŽDY má náhodný request (jako normální NPC)
+    const npcData = {
+        element: npcElement,
+        position: posNum,
+        request: generateNPCRequest(posNum), // Náhodný request!
+        isSafe: posNum === 1,
+        despawnTimer: null 
+    };
+    
+    npcContainer.appendChild(npcElement);
+    activeNPCs[posNum] = npcData;
+    
+    // Arthur zůstane déle (VIP!)
+    npcData.despawnTimer = setTimeout(() => {
+        removeNPC(posNum);
+    }, 60000); // 60s místo 50s
+    
+    setTimeout(() => createNPCBubble(npcData, posNum), 500);
+}
+
+// Globální funkce pro manuální spawn
+window.spawnArthur = spawnArthur;
+
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(startNPCSpawning, 100);
+    setTimeout(startNPCSpawning, 10000);
 });

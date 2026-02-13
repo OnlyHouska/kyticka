@@ -68,9 +68,9 @@
     left: 91%;
     transform: rotateY(180deg);
 }
-.npc--pos-2 .npc-request-item {
-    /* transform: rotateY(180deg); */
-}
+/* .npc--pos-2 .npc-request-item {
+    transform: rotateY(180deg);
+} */
 .npc--pos-3 {
     top: 67.5%;
     left: 10%;

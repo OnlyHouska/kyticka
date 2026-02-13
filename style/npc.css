@@ -69,7 +69,7 @@
     transform: rotateY(180deg);
 }
 .npc--pos-2 .npc-request-item {
-    transform: rotateY(180deg);
+    /* transform: rotateY(180deg); */
 }
 .npc--pos-3 {
     top: 67.5%;
@@ -85,6 +85,8 @@
     background-image: url('../assets/npc.png');
     background-size: 193px;
     background-position: 0 0;
+
+    animation: npcJump 10s infinite;
 }
 
 .npc--skin-arthur {
@@ -335,3 +337,9 @@
     filter: drop-shadow(0 0 15px rgba(245, 101, 101, 0.8));
 }
 
+@keyframes npcJump {
+    0% { transform: translateY(0); }
+    3% { transform: translateY(-10px); }
+    6% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+}

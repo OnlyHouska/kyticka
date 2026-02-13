@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kyticka</title>
+    <link rel="stylesheet" href="../style/stable.css">
+    <link rel="stylesheet" href="../style/ui.css">
+    <style>
+    </style>
+</head>
+<body style="height: 100vh; user-select: none; overflow: hidden;">
+     <img src="../assets/stable_inside.png" alt="" style="
+        position: absolute;
+        z-index: -1;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        ">
+
+    <div class="ui-top">
+        <!-- <a href="./garden.html" class="backArrowIcon"></a> -->
+
+        <div style="position: relative; height: 50px; width: 50px; margin-top: -10px; margin-right: 100px; display: flex;">
+            <img src="../assets/money.png" style="width: 100%; height: 100%;">
+            <span id="moneyCount" style="position: absolute; bottom: -20px; width: 100%; text-align: center; color: white;">0</span>
+        </div>
+    </div>
+
+    <a href="./garden.html" class="stable__back"></a>
+
+    <div class="horses">
+        <div class="horse__container horse__container--1">
+            <img src="../assets/nametag.png" class="horse__name-tag horse__name-tag--1" id="nametag1">
+            <div class="horse__name horse__name--1" id="horseName1"></div>
+            <div class="horse horse--1 horse--locked"></div>
+            <img src="../assets/lock.png" class="horse__lock horse__lock--1">
+            <button class="horse__unlock-button" id="buyHorse1"
+            style="
+                left: 125px;
+                bottom: -130px;
+            " onclick="buyHorse(1, 60)">Koupit&nbsp;&nbsp;(60)</button>
+        </div>
+        <div class="horse__container horse__container--2">
+            <img src="../assets/nametag.png" class="horse__name-tag horse__name-tag--2" id="nametag2">
+            <div class="horse__name horse__name--2" id="horseName2"></div>
+            <div class="horse horse--2 horse--locked"></div>
+            <img src="../assets/lock.png" class="horse__lock horse__lock--2">
+            <button class="horse__unlock-button" id="buyHorse2"
+            style="
+                left: 35px;
+                bottom: -145px;
+            " onclick="buyHorse(2, 100)">Koupit&nbsp;&nbsp;(100)</button>
+        </div>
+        <div class="horse__container horse__container--3">
+            <img src="../assets/nametag.png" class="horse__name-tag horse__name-tag--3" id="nametag3">
+            <div class="horse__name horse__name--3" id="horseName3"></div>
+            <div class="horse horse--3 horse--locked"></div>
+            <img src="../assets/lock.png" class="horse__lock horse__lock--3">
+            <button class="horse__unlock-button" onclick="buyHorse(3, 120)" id="buyHorse3"
+            style="
+                left: 53px;
+                bottom: -135px;
+            ">Koupit&nbsp;&nbsp;(120)</button>
+        </div>
+    </div>
+
+</body>
+<script src="../scripts/cookies.js"></script>
+<script src="../scripts/stable.js"></script>
+</html>

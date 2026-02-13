@@ -248,7 +248,15 @@ function clearGameData() {
     gardens[3].locked = true;
     gardens[4].locked = true;
 
+    // Reset seeds
+    seedUnlocked[1] = true;
+    seedUnlocked[2] = true;
+    seedUnlocked[3] = false;
+    seedUnlocked[4] = false;
+    seedUnlocked[5] = false;
+    
     updateGardenVisuals();
+
     console.log('Game data cleared');
 }
 
@@ -426,10 +434,10 @@ function handleShovelDrag() {
 
             garden.shovelInterval = setInterval(() => {
                 garden.shovelHoverTimer += 100;
-                const percentage = Math.min((garden.shovelHoverTimer / 5000) * 100, 100);
+                const percentage = Math.min((garden.shovelHoverTimer / 3500) * 100, 100);
                 timerFill.style.width = percentage + '%';
 
-                if (garden.shovelHoverTimer >= 5000) {
+                if (garden.shovelHoverTimer >= 3500) {
                     clearInterval(garden.shovelInterval);
                     garden.shovelInterval = null;
                     garden.shovelHoverTimer = 0;
@@ -618,7 +626,7 @@ function handleCollision(element, gardenId) {
 function startGrowthTimer(gardenId) {
     const garden = gardens[gardenId];
     // garden.growthDuration = Math.floor(Math.random() * (10000 - 5000)) + 5000;
-    garden.growthDuration = Math.floor(Math.random() * (300 - 100)) + 100;
+    garden.growthDuration = Math.floor(Math.random() * (3000 - 1000)) + 1000;
     garden.growthTimer = 0;
 
     if (garden.timerInterval) {
@@ -754,19 +762,18 @@ function loadSeedUnlocks() {
     // Pokud lockedSeeds neexistuje, použij default hodnoty (1,2 unlocked)
 }
 
-
 // Initialize game on page load
 window.addEventListener('DOMContentLoaded', () => {
-    initPlantElements();  // ✅ PRVNI!
-    loadGameData();
-    updateGardenVisuals();
+    initPlantElements();
+    loadGameData();  // Nahraje cookies do seedUnlocked
+    updateGardenVisuals();  // Použije gardens z loadGameData
     initializeBuyButtons();
-    updateSeedVisuals();
-    tools = Array.from(document.getElementsByClassName('movable')); // Refresh tools
+    updateSeedVisuals();  // ✅ ZDE - po loadGameData!
+    tools = Array.from(document.getElementsByClassName('movable'));
 });
 
 
 // Optional: Auto-save every 30 seconds
 setInterval(() => {
-    saveGameData();
+    saveGameData;
 }, 30000);

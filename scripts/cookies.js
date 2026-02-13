@@ -65,3 +65,11 @@ function addGameMoney(amount) {
     const moneyElement = document.getElementById('moneyCount');
     if (moneyElement) moneyElement.textContent = gameData.money;
 }
+
+function removeGameMoney(amount) {
+    const gameData = getGameCookie() || { money: 0, plantCounts: {}, lockedGardens: {}, version: 1 };
+    gameData.money = Math.max(0, (gameData.money || 0) - amount);
+    saveGameCookie(gameData);
+    const moneyElement = document.getElementById('moneyCount');
+    if (moneyElement) moneyElement.textContent = gameData.money;
+}

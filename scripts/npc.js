@@ -23,6 +23,36 @@ function getPlantCounts() {
     return {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
 }
 
+
+// 🎉 CONFetti funkce - pusť na NPC pozici
+function playConfettiAnimation(npcElement) {
+    if (!npcElement) return;
+    
+    const npcRect = npcElement.getBoundingClientRect();
+    const confettiImg = document.createElement('img');
+    confettiImg.src = '../assets/confetti.gif';
+    confettiImg.style.cssText = `
+        position: fixed;
+        top: ${npcRect.top + npcRect.height/2}px;
+        left: ${npcRect.left + npcRect.width/2}px;
+        width: 200px;
+        height: 200px;
+        z-index: 9999;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+    `;
+    
+    document.body.appendChild(confettiImg);
+    
+    // Odstraň po 2s
+    setTimeout(() => {
+        if (confettiImg.parentNode) {
+            confettiImg.parentNode.removeChild(confettiImg);
+        }
+    }, 2000);
+}
+
 function hasEnoughItems(plantNumber, count) {
     const plantCounts = getPlantCounts();
     return (plantCounts[plantNumber] || 0) >= count;
@@ -219,6 +249,9 @@ function fulfillNPCRequest(position) {
             clearTimeout(npc.despawnTimer);
         }
 
+        // 🎉 PUSŤ CONFetti NA NPC!
+        playConfettiAnimation(npc.element);
+
         for (let item of request) {
             removeItems(item.type, item.count);
         }
@@ -227,7 +260,7 @@ function fulfillNPCRequest(position) {
         if (typeof addMoney === 'function') addMoney(reward);
         
         removeNPC(position);
-        console.log(`NPC ${position} fulfilled! Reward: ${reward}`);
+        console.log(`NPC ${position} fulfilled! Reward: ${reward} 🎉`);
         return true;
     }
     console.log(`Cannot fulfill NPC ${position}`);
@@ -309,5 +342,5 @@ function hasEnoughItems(plantNumber, count) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(startNPCSpawning, 10000);
+    setTimeout(startNPCSpawning, 100);
 });

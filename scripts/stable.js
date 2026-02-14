@@ -59,6 +59,7 @@ if (gameData.money !== undefined) {
 
 function buyHorse(horseId, cost) {
     if (gameData.money >= cost) {
+
         removeGameMoney(cost);
         const lockElement = document.querySelector(`.horse__lock--${horseId}`);
         if (lockElement) lockElement.style.display = 'none';
@@ -83,6 +84,11 @@ function buyHorse(horseId, cost) {
 
         horses[horseId].name = name;
         horses[horseId].unlocked = true;
+
+
+        const music = new Audio("../assets/npc-sold.mp3");
+        music.volume = 0.9;
+        music.play();
 
         saveHorsesToCookie();
     } else {

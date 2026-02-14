@@ -265,6 +265,10 @@ function fulfillNPCRequest(position) {
         // PUSŤ CONFetti NA NPC!
         playConfettiAnimation(npc.element);
 
+        const music = new Audio("../assets/npc-sold.mp3");
+        music.volume = 0.9;
+        music.play();
+
         for (let item of request) {
             removeItems(item.type, item.count);
         }

@@ -299,7 +299,7 @@
     <div class="npc__container">
     </div>
 
-    <a href="./stable.html" class="garden__stable-in">
+    <a href="./stable.html" class="garden__stable-in gate">
     </a>
 
     <!-- <a class="stable" href="./stable.html"
@@ -314,8 +314,18 @@
     ">
         <img src="../assets/stable.png" style="width: 100%; height: 100%;">
     </div> -->
+
+    <!-- Nejjednodušší způsob - HTML5 audio tag -->
 </body>
 
 <script src="../scripts/garden.js"></script>
 <script src="../scripts/npc.js"></script>
+<script src="../scripts/sounds.js"></script>
+
+<script>
+    const music = new Audio("../assets/MountainHymn.mp3");
+    music.loop = true;
+    music.volume = 0.9;
+    music.play();
+</script>
 </html>

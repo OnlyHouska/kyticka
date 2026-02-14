@@ -296,6 +296,11 @@ function buyPlot(gardenId) {
         dirt.style.filter = 'none';
 
         if (moneyElement) moneyElement.textContent = money;
+
+        const music = new Audio("../assets/npc-sold.mp3");
+        music.volume = 0.9;
+        music.play();
+        
         console.log(`Plot ${gardenId} unlocked!`);
     } else {
         alert(`Nemas penizky L. Potrebujes ${garden.plotCost} penez. Precti si to nigga`);
@@ -725,6 +730,10 @@ function unlockSeed(seedType) {
         
         // ✅ OPRAV - Použij existující moneyElement
         if (moneyElement) moneyElement.textContent = gameData.money;
+
+        const music = new Audio("../assets/npc-sold.mp3");
+        music.volume = 0.9;
+        music.play();
         
         updateSeedVisuals();
         console.log(`Seed ${seedType} unlocked for ${cost} coins!`);
@@ -771,7 +780,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updateSeedVisuals();  // ✅ ZDE - po loadGameData!
     tools = Array.from(document.getElementsByClassName('movable'));
 });
-
 
 // Optional: Auto-save every 30 seconds
 setInterval(() => {
